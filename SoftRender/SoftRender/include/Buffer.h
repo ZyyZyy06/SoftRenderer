@@ -37,6 +37,7 @@ public:
 class RGBABuffer : public Buffer {
 public:
 	RGBABuffer() :Buffer(4) {}
+	~RGBABuffer() {}
 
 
 	void initWithTargetColor(const Vector4f targetColor) {
@@ -93,7 +94,7 @@ public:
 class ByteBuffer : public Buffer {
 public:
 	ByteBuffer() : Buffer(1) {}
-
+	~ByteBuffer(){}
 
 	void initWithTargetValue(const float targetValue) {
 		assert(targetValue <= 1.0 && targetValue >= 0.0);
@@ -180,10 +181,7 @@ public:
 	RGBABuffer rgbaBuffer;
 	DepthBuffer depthBuffer;
 	FrameBuffer() {}
-	~FrameBuffer() {
-		rgbaBuffer.~RGBABuffer();
-		depthBuffer.~DepthBuffer();
-	}
+	~FrameBuffer() {}
 
 	void updateBufferSize() {
 		rgbaBuffer.updateBufferSize();
@@ -218,6 +216,7 @@ private:
 		backgroundColor = Vector4f(0.0, 0.0, 0.0, 1.0);
 	}
 	~WindowBuffer() {
+		currentBuffer = NULL;
 	}
 
 public:
@@ -283,8 +282,10 @@ public:
 		return singleInstance;
 	}
 	static void deleteInstance() {
-		delete singleInstance;
-		singleInstance = NULL;
+		if (singleInstance != NULL) {
+			delete singleInstance;
+			singleInstance = NULL;
+		}
 	}
 };
 

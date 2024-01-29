@@ -31,6 +31,14 @@ void  CALLBACK Update(HWND hwnd, UINT message, UINT_PTR iTimerID, DWORD dwTime)
 	drawCall(hwnd);
 }
 
+void end() {
+	WindowBuffer::getInstance()->deleteInstance();
+	if (GL_MAIN_PROJECT != NULL) {
+		delete GL_MAIN_PROJECT;
+		GL_MAIN_PROJECT = NULL;
+	}
+
+}
 
 void Init() {
 	Project* project = new DefaultProject();
@@ -38,11 +46,7 @@ void Init() {
 	GL_MAIN_PROJECT = project;
 }
 
-void end() {
-	WindowBuffer::getInstance()->deleteInstance();
-	if (GL_MAIN_PROJECT != NULL)
-		delete GL_MAIN_PROJECT;
-}
+
 
 
 LRESULT CALLBACK WinSunProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -52,10 +56,10 @@ LRESULT CALLBACK WinSunProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HDC hdc;
 		PAINTSTRUCT  ps;
 	case WM_CLOSE:
+		end();
 		DestroyWindow(hwnd);
 		break;
 	case WM_DESTROY:
-		end();
 		PostQuitMessage(0);
 		break;
 	case WM_PAINT: {
@@ -127,7 +131,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		DispatchMessage(&msg);
 	}
 	GdiplusShutdown(gdiplusToken);
-	end();
 
 	return msg.wParam;
 }
